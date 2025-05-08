@@ -3,7 +3,6 @@ import { ChevronDown, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 import { agentRankingData } from "../mockData/mockData";
 import fetchData from "../utils/fetchData";
 
-
 const AgentRankingDashboard = () => {
   const [agentRankingData, setAgentRankingData] = useState(null);
   const [selectedYear, setSelectedYear] = useState(null);
@@ -13,7 +12,11 @@ const AgentRankingDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [years, setYears] = useState([]);
   useEffect(() => {
-    fetchData(`${import.meta.env.VITE_AGENT_RANKING}${ JSON.parse(localStorage.getItem("user")).ID}`)
+    fetchData(
+      `${import.meta.env.VITE_AGENT_RANKING}${
+        JSON.parse(localStorage.getItem("user")).ID
+      }`
+    )
       .then((data) => {
         console.log("Received Data:", data);
         setAgentRankingData(data);
@@ -23,11 +26,25 @@ const AgentRankingDashboard = () => {
       })
       .catch((err) => {
         console.error("Fetch error:", err.message);
-      })
-      setLoading(false)
+        setLoading(false);
+        setAgentRankingData(null);
+      });
+    setLoading(false);
   }, []);
 
-  if (loading|| !agentRankingData || !selectedYear) return <div className="text-4xl text-center text-gray-600 dark:text-white">Loading...</div>;
+  if (loading)
+    return (
+      <div className="text-4xl text-center text-gray-600 dark:text-white">
+        Loading...
+      </div>
+    );
+
+  if (!agentRankingData)
+    return (
+      <div className="text-4xl text-center text-gray-600 dark:text-white">
+        No data available
+      </div>
+    );
 
   const currentData = agentRankingData[selectedYear];
   const months = currentData.months.map((item) => item.month);
@@ -49,7 +66,6 @@ const AgentRankingDashboard = () => {
     if (currentRank > prevRank) return "down";
     return "same";
   };
-
 
   const TrendIndicator = ({ trend }) => {
     if (!trend) return null;
@@ -79,7 +95,7 @@ const AgentRankingDashboard = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-              {/* <div className="text-xl font-semibold text-gray-800 dark:text-white bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 dark:from-indigo-500 dark:via-purple-500 dark:to-pink-500 p-4 rounded-2xl shadow-lg">
+          {/* <div className="text-xl font-semibold text-gray-800 dark:text-white bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 dark:from-indigo-500 dark:via-purple-500 dark:to-pink-500 p-4 rounded-2xl shadow-lg">
                 Welcome {JSON.parse(localStorage.getItem("user").NAME)}
               </div> */}
           <div className="bg-blue-100 dark:bg-blue-800 rounded-2xl p-4 shadow-sm mb-6">
